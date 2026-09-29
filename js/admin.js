@@ -41,6 +41,68 @@ function initLogin() {
 // 页面加载时先检查登录
 initLogin();
 
+// ===== 一键部署 =====
+function showDeployTip(msg, type) {
+  const old = document.querySelector('.deploy-tip');
+  if (old) old.remove();
+  const tip = document.createElement('div');
+  tip.className = 'deploy-tip ' + (type || '');
+  tip.innerHTML = `<span class="close-tip" onclick="this.parentElement.remove()">×</span>${msg}`;
+  document.body.appendChild(tip);
+  setTimeout(() => tip.remove(), 6000);
+}
+
+async function deploySite() {
+  const btn = document.getElementById('deployBtn');
+  const originalText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '⏳ 部署中...';
+
+  const { owner, repo } = window.GITHUB_CONFIG;
+  const token = localStorage.getItem('github_token');
+
+  try {
+    // 1. 触发 GitHub Pages 重新构建
+    if (token) {
+      const buildRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/pages/builds`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        },
+        cache: 'no-store'
+      });
+      if (!buildRes.ok && buildRes.status !== 409) {
+        throw new Error('触发构建失败: ' + buildRes.status);
+      }
+    }
+
+    // 2. 清除数据缓存，重新加载
+    GitHubData.refresh();
+    await loadBrandsAdmin();
+    await loadCarsAdmin();
+
+    // 3. 刷新当前页面所有数据
+    btn.classList.add('success');
+    btn.innerHTML = '✅ 部署成功';
+    showDeployTip('✅ 部署成功！数据已刷新，页面将在 1-2 分钟内更新到 GitHub Pages。<br><small>如首页未更新，请按 Ctrl+Shift+R 强制刷新。</small>', 'success');
+
+    setTimeout(() => {
+      btn.classList.remove('success');
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }, 3000);
+
+  } catch (e) {
+    btn.innerHTML = '❌ 部署失败';
+    showDeployTip('❌ ' + e.message, 'error');
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }, 3000);
+  }
+}
+
 // Tab 切换
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.onclick = () => {
