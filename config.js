@@ -4,5 +4,5 @@
 window.GITHUB_CONFIG = {
   owner: 'Xjrxjr',          // 你的 GitHub 用户名
   repo: '2026929',          // 仓库名
-  token: 'YOUR_GITHUB_TOKEN' // 替换为你的 Token
+  token: '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' // 替换为你的 Token
 };
