@@ -1,6 +1,42 @@
 // 管理后台脚本 - 使用 GitHub 数据层
 let editingId = null;
 
+// ===== 登录验证 =====
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function checkLogin() {
+  return sessionStorage.getItem('admin_logged_in') === '1';
+}
+
+async function doLogin() {
+  const pwd = document.getElementById('loginPassword').value;
+  const hash = await sha256(pwd);
+  if (hash === window.ADMIN_PASSWORD_HASH) {
+    sessionStorage.setItem('admin_logged_in', '1');
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.body.style.visibility = 'visible';
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('loginPassword').value = '';
+  }
+}
+
+function initLogin() {
+  if (checkLogin()) {
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.body.style.visibility = 'visible';
+  } else {
+    document.body.style.visibility = 'hidden';
+    document.getElementById('loginOverlay').style.display = 'flex';
+  }
+}
+
+// 页面加载时先检查登录
+initLogin();
+
 // Tab 切换
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.onclick = () => {
