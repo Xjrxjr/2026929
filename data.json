@@ -85,6 +85,11 @@
       "id": 8,
       "series_id": 8,
       "name": "123456"
+    },
+    {
+      "id": 9,
+      "series_id": 9,
+      "name": "123456"
     }
   ],
   "cars": [
@@ -130,7 +135,7 @@
   "nextId": {
     "brands": 5,
     "series": 10,
-    "models": 9,
+    "models": 10,
     "cars": 4
   }
 }
