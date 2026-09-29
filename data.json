@@ -43,11 +43,6 @@
       "name": "5系"
     },
     {
-      "id": 7,
-      "brand_id": 3,
-      "name": "轿车"
-    },
-    {
       "id": 8,
       "brand_id": 4,
       "name": "轿车"
@@ -82,7 +77,46 @@
       "brand_name": "大众"
     }
   ],
-  "cars": [],
+  "cars": [
+    {
+      "id": 1,
+      "brand_id": 1,
+      "series_id": 2,
+      "model_id": 2,
+      "title": "2023款 奔驰 E 300 L 豪华型",
+      "price": 42.8,
+      "year": 2023,
+      "mileage": 1.5,
+      "color": "黑色",
+      "fuel": "汽油",
+      "transmission": "自动",
+      "description": "个人一手车，全程4S店保养，无事故无泡水，车况精品。",
+      "images": "",
+      "contact_name": "张先生",
+      "contact_phone": "13800138000",
+      "status": 1,
+      "created_at": "2026-09-29T04:08:05.473Z"
+    },
+    {
+      "id": 2,
+      "brand_id": 2,
+      "series_id": 4,
+      "model_id": 4,
+      "title": "2022款 宝马 530Li 尊享型",
+      "price": 38.5,
+      "year": 2022,
+      "mileage": 3.2,
+      "color": "白色",
+      "fuel": "汽油",
+      "transmission": "自动",
+      "description": "准新车，配置丰富，全景天窗，座椅加热通风。",
+      "images": "",
+      "contact_name": "李女士",
+      "contact_phone": "13900139000",
+      "status": 1,
+      "created_at": "2026-09-29T04:08:05.473Z"
+    }
+  ],
   "nextId": {
     "brands": 5,
     "series": 9,
