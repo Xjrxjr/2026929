@@ -46,6 +46,11 @@
       "id": 8,
       "brand_id": 4,
       "name": "轿车"
+    },
+    {
+      "id": 9,
+      "brand_id": 4,
+      "name": "轿车"
     }
   ],
   "models": [
@@ -124,7 +129,7 @@
   ],
   "nextId": {
     "brands": 5,
-    "series": 9,
+    "series": 10,
     "models": 9,
     "cars": 4
   }
