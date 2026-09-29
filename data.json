@@ -120,12 +120,31 @@
       "contact_phone": "13900139000",
       "status": 1,
       "created_at": "2026-09-29T04:08:05.473Z"
+    },
+    {
+      "id": 4,
+      "brand_id": 4,
+      "series_id": 8,
+      "model_id": 7,
+      "title": "yaris08桑坦纳-速度130左右",
+      "price": 10,
+      "year": 8,
+      "mileage": null,
+      "color": "",
+      "fuel": "汽油",
+      "transmission": "自动",
+      "description": "",
+      "images": "",
+      "contact_name": "",
+      "contact_phone": "",
+      "status": 1,
+      "created_at": "2026-09-29T05:38:27.540Z"
     }
   ],
   "nextId": {
     "brands": 5,
     "series": 9,
     "models": 9,
-    "cars": 4
+    "cars": 5
   }
 }
