@@ -18,7 +18,7 @@
     {
       "id": 4,
       "name": "大众",
-      "logo": "https://ts2.tc.mm.bing.net/th/id/OIP-C.02N0sqSDT5wfHmkV-vSEpwHaHY?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
+      "logo": ""
     }
   ],
   "series": [
@@ -120,31 +120,12 @@
       "contact_phone": "13900139000",
       "status": 1,
       "created_at": "2026-09-29T04:08:05.473Z"
-    },
-    {
-      "id": 4,
-      "brand_id": 4,
-      "series_id": 8,
-      "model_id": 7,
-      "title": "yaris08桑坦纳-速度130左右",
-      "price": 10,
-      "year": 8,
-      "mileage": null,
-      "color": "",
-      "fuel": "汽油",
-      "transmission": "自动",
-      "description": "",
-      "images": "",
-      "contact_name": "",
-      "contact_phone": "",
-      "status": 1,
-      "created_at": "2026-09-29T05:35:39.183Z"
     }
   ],
   "nextId": {
     "brands": 5,
     "series": 9,
     "models": 9,
-    "cars": 5
+    "cars": 4
   }
 }
