@@ -45,10 +45,10 @@
     {
       "id": 7,
       "brand_id": 3,
-      "name": "suv"
+      "name": "轿车"
     },
     {
-      "id": 9,
+      "id": 8,
       "brand_id": 4,
       "name": "轿车"
     }
@@ -73,6 +73,13 @@
       "id": 4,
       "series_id": 4,
       "name": "530Li"
+    },
+    {
+      "id": 7,
+      "series_id": 8,
+      "name": "桑坦纳",
+      "series_name": "轿车",
+      "brand_name": "大众"
     }
   ],
   "cars": [
@@ -117,7 +124,7 @@
   ],
   "nextId": {
     "brands": 5,
-    "series": 10,
+    "series": 9,
     "models": 8,
     "cars": 4
   }
