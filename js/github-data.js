@@ -32,41 +32,55 @@ const GitHubData = (() => {
     return cache;
   }
 
-  // 写入数据到 GitHub
+  // 写入数据到 GitHub（带 SHA 重试）
   async function save() {
     const token = localStorage.getItem('github_token');
     if (!token) throw new Error('请先在管理后台设置 GitHub Token');
 
-    // 先获取当前文件的 sha
-    const getRes = await fetch(API_BASE, {
-      headers: getWriteHeaders()
-    });
-    if (getRes.ok) {
-      const getJson = await getRes.json();
-      currentSha = getJson.sha;
-    } else if (getRes.status !== 404) {
-      throw new Error('获取文件信息失败: ' + getRes.status);
-    }
-
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(cache, null, 2))));
-    const body = {
-      message: 'update data.json',
-      content: content
-    };
-    if (currentSha) body.sha = currentSha;
 
-    const res = await fetch(API_BASE, {
-      method: 'PUT',
-      headers: getWriteHeaders(),
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) {
+    // 最多重试 3 次（处理 SHA 不匹配）
+    for (let attempt = 0; attempt < 3; attempt++) {
+      // 重新获取当前文件的 sha
+      const getRes = await fetch(API_BASE, {
+        headers: getWriteHeaders(),
+        cache: 'no-store'
+      });
+      if (getRes.ok) {
+        const getJson = await getRes.json();
+        currentSha = getJson.sha;
+      } else if (getRes.status !== 404) {
+        throw new Error('获取文件信息失败: ' + getRes.status);
+      }
+
+      const body = {
+        message: 'update data.json',
+        content: content
+      };
+      if (currentSha) body.sha = currentSha;
+
+      const res = await fetch(API_BASE, {
+        method: 'PUT',
+        headers: getWriteHeaders(),
+        body: JSON.stringify(body),
+        cache: 'no-store'
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        currentSha = result.content.sha;
+        return result;
+      }
+
+      // 如果是 SHA 不匹配（409），重试
+      if (res.status === 409 && attempt < 2) {
+        await new Promise(r => setTimeout(r, 500));
+        continue;
+      }
+
       const err = await res.json().catch(() => ({}));
       throw new Error('保存失败: ' + (err.message || res.status));
     }
-    const result = await res.json();
-    currentSha = result.content.sha;
-    return result;
   }
 
   // 获取数据（带缓存）
