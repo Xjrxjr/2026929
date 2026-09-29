@@ -13,9 +13,13 @@ function checkLogin() {
 
 async function doLogin() {
   const pwd = document.getElementById('loginPassword').value;
+  const token = document.getElementById('githubToken').value.trim();
   const hash = await sha256(pwd);
   if (hash === window.ADMIN_PASSWORD_HASH) {
     sessionStorage.setItem('admin_logged_in', '1');
+    if (token) {
+      localStorage.setItem('github_token', token);
+    }
     document.getElementById('loginOverlay').style.display = 'none';
     document.body.style.visibility = 'visible';
   } else {

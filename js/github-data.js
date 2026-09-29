@@ -1,36 +1,53 @@
 // GitHub 数据层 - 通过 GitHub Contents API 读写仓库中的 data.json
 const GitHubData = (() => {
-  const { owner, repo, token } = window.GITHUB_CONFIG;
+  const { owner, repo } = window.GITHUB_CONFIG;
   const DATA_PATH = 'data.json';
   const API_BASE = `https://api.github.com/repos/${owner}/${repo}/contents/${DATA_PATH}`;
-  const headers = {
-    'Authorization': `token ${token}`,
-    'Accept': 'application/vnd.github.v3+json',
-    'Content-Type': 'application/json'
-  };
 
   let cache = null;
   let currentSha = null;
 
-  // 从 GitHub 读取数据
+  // 获取写操作的 headers（token 从 localStorage 读取）
+  function getWriteHeaders() {
+    const token = localStorage.getItem('github_token') || '';
+    return {
+      'Authorization': `token ${token}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    };
+  }
+
+  // 从 GitHub 读取数据（用 raw 链接，公开仓库无需 token）
   async function load() {
-    const res = await fetch(API_BASE, { headers });
+    const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/main/${DATA_PATH}`;
+    const res = await fetch(rawUrl, { cache: 'no-store' });
     if (res.status === 404) {
-      // 文件不存在，初始化
       cache = { brands: [], series: [], models: [], cars: [], nextId: { brands: 1, series: 1, models: 1, cars: 1 } };
       currentSha = null;
       return cache;
     }
     if (!res.ok) throw new Error('读取数据失败: ' + res.status);
-    const data = await res.json();
-    currentSha = data.sha;
-    const content = decodeURIComponent(escape(atob(data.content)));
-    cache = JSON.parse(content);
+    cache = await res.json();
+    currentSha = null; // save 时重新获取
     return cache;
   }
 
   // 写入数据到 GitHub
   async function save() {
+    const token = localStorage.getItem('github_token');
+    if (!token) throw new Error('请先在管理后台设置 GitHub Token');
+
+    // 先获取当前文件的 sha
+    const getRes = await fetch(API_BASE, {
+      headers: getWriteHeaders()
+    });
+    if (getRes.ok) {
+      const getJson = await getRes.json();
+      currentSha = getJson.sha;
+    } else if (getRes.status !== 404) {
+      throw new Error('获取文件信息失败: ' + getRes.status);
+    }
+
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(cache, null, 2))));
     const body = {
       message: 'update data.json',
@@ -40,7 +57,7 @@ const GitHubData = (() => {
 
     const res = await fetch(API_BASE, {
       method: 'PUT',
-      headers,
+      headers: getWriteHeaders(),
       body: JSON.stringify(body)
     });
     if (!res.ok) {
