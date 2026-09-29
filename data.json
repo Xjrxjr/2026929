@@ -73,6 +73,11 @@
       "id": 4,
       "series_id": 4,
       "name": "530Li"
+    },
+    {
+      "id": 7,
+      "series_id": 8,
+      "name": "桑坦纳"
     }
   ],
   "cars": [
@@ -118,7 +123,7 @@
   "nextId": {
     "brands": 5,
     "series": 9,
-    "models": 7,
+    "models": 8,
     "cars": 4
   }
 }
