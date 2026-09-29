@@ -41,6 +41,11 @@
       "id": 4,
       "brand_id": 2,
       "name": "5系"
+    },
+    {
+      "id": 7,
+      "brand_id": 3,
+      "name": "suv"
     }
   ],
   "models": [
@@ -107,7 +112,7 @@
   ],
   "nextId": {
     "brands": 5,
-    "series": 7,
+    "series": 8,
     "models": 7,
     "cars": 4
   }
