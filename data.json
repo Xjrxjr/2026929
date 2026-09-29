@@ -98,25 +98,6 @@
   ],
   "cars": [
     {
-      "id": 1,
-      "brand_id": 1,
-      "series_id": 2,
-      "model_id": 2,
-      "title": "2023款 奔驰 E 300 L 豪华型",
-      "price": 42.8,
-      "year": 2023,
-      "mileage": 1.5,
-      "color": "黑色",
-      "fuel": "汽油",
-      "transmission": "自动",
-      "description": "个人一手车，全程4S店保养，无事故无泡水，车况精品。",
-      "images": "",
-      "contact_name": "张先生",
-      "contact_phone": "13800138000",
-      "status": 1,
-      "created_at": "2026-09-29T04:08:05.473Z"
-    },
-    {
       "id": 2,
       "brand_id": 2,
       "series_id": 4,
