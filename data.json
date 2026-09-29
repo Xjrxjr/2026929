@@ -77,7 +77,9 @@
     {
       "id": 7,
       "series_id": 8,
-      "name": "桑坦纳"
+      "name": "桑坦纳",
+      "series_name": "轿车",
+      "brand_name": "大众"
     }
   ],
   "cars": [
