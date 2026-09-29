@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>车辆售卖 - 精选二手车</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="header">
+  <div class="container header-inner">
+    <div class="logo">🚗 车易购</div>
+    <nav class="nav">
+      <a href="/">首页</a>
+      <a href="/admin">管理后台</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>精选好车，一站搞定</h1>
+    <p>海量优质二手车源，品牌车系任你选</p>
+    <div class="search-bar">
+      <input type="text" id="keyword" placeholder="搜索车型名称或关键词...">
+      <button onclick="loadCars()">搜索</button>
+    </div>
+  </div>
+</section>
+
+<section class="filters container">
+  <div class="filter-row">
+    <label>品牌：</label>
+    <select id="filterBrand" onchange="onBrandChange()">
+      <option value="">全部品牌</option>
+    </select>
+    <label>车系：</label>
+    <select id="filterSeries" onchange="onSeriesChange()">
+      <option value="">全部车系</option>
+    </select>
+    <label>车型：</label>
+    <select id="filterModel" onchange="loadCars()">
+      <option value="">全部车型</option>
+    </select>
+    <button class="btn-reset" onclick="resetFilters()">重置</button>
+  </div>
+</section>
+
+<main class="container">
+  <div class="car-grid" id="carGrid"></div>
+  <div id="emptyTip" class="empty-tip" style="display:none;">暂无车辆信息</div>
+</main>
+
+<!-- 详情弹窗 -->
+<div class="modal" id="detailModal">
+  <div class="modal-content modal-detail">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">© 2026 车易购 - 车辆售卖平台</div>
+</footer>
+
+<script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理后台 - 车易购</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="header">
+  <div class="container header-inner">
+    <div class="logo">🚗 车易购 - 管理后台</div>
+    <nav class="nav">
+      <a href="/">返回首页</a>
+    </nav>
+  </div>
+</header>
+
+<div class="admin-layout container">
+  <aside class="sidebar">
+    <button class="tab-btn active" data-tab="brands">品牌管理</button>
+    <button class="tab-btn" data-tab="series">车系管理</button>
+    <button class="tab-btn" data-tab="models">车型管理</button>
+    <button class="tab-btn" data-tab="cars">车辆管理</button>
+  </aside>
+
+  <section class="admin-content">
+    <!-- 品牌管理 -->
+    <div class="tab-panel active" id="panel-brands">
+      <h2>品牌管理</h2>
+      <div class="form-row">
+        <input type="text" id="brandName" placeholder="品牌名称">
+        <input type="text" id="brandLogo" placeholder="Logo URL (可选)">
+        <button class="btn-primary" onclick="saveBrand()">添加品牌</button>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>ID</th><th>品牌名称</th><th>Logo</th><th>操作</th></tr></thead>
+        <tbody id="brandList"></tbody>
+      </table>
+    </div>
+
+    <!-- 车系管理 -->
+    <div class="tab-panel" id="panel-series">
+      <h2>车系管理</h2>
+      <div class="form-row">
+        <select id="seriesBrandId"></select>
+        <input type="text" id="seriesName" placeholder="车系名称">
+        <button class="btn-primary" onclick="saveSeries()">添加车系</button>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>ID</th><th>所属品牌</th><th>车系名称</th><th>操作</th></tr></thead>
+        <tbody id="seriesList"></tbody>
+      </table>
+    </div>
+
+    <!-- 车型管理 -->
+    <div class="tab-panel" id="panel-models">
+      <h2>车型管理</h2>
+      <div class="form-row">
+        <select id="modelBrandId" onchange="loadSeriesForModel()"></select>
+        <select id="modelSeriesId"></select>
+        <input type="text" id="modelName" placeholder="车型名称">
+        <button class="btn-primary" onclick="saveModel()">添加车型</button>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>ID</th><th>品牌</th><th>车系</th><th>车型名称</th><th>操作</th></tr></thead>
+        <tbody id="modelList"></tbody>
+      </table>
+    </div>
+
+    <!-- 车辆管理 -->
+    <div class="tab-panel" id="panel-cars">
+      <h2>车辆管理</h2>
+      <button class="btn-primary" onclick="openCarModal()">+ 添加车辆</button>
+      <table class="data-table">
+        <thead><tr><th>ID</th><th>标题</th><th>品牌</th><th>车系</th><th>车型</th><th>价格</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody id="carList"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- 车辆编辑弹窗 -->
+<div class="modal" id="carModal">
+  <div class="modal-content">
+    <span class="close" onclick="closeCarModal()">&times;</span>
+    <h2 id="carModalTitle">添加车辆</h2>
+    <div class="form-grid">
+      <div class="form-item"><label>品牌 *</label>
+        <select id="carBrandId" onchange="loadSeriesForCar()"></select>
+      </div>
+      <div class="form-item"><label>车系 *</label>
+        <select id="carSeriesId" onchange="loadModelsForCar()"></select>
+      </div>
+      <div class="form-item"><label>车型 *</label>
+        <select id="carModelId"></select>
+      </div>
+      <div class="form-item"><label>标题 *</label>
+        <input type="text" id="carTitle">
+      </div>
+      <div class="form-item"><label>价格 (万元) *</label>
+        <input type="number" step="0.01" id="carPrice">
+      </div>
+      <div class="form-item"><label>年份</label>
+        <input type="number" id="carYear">
+      </div>
+      <div class="form-item"><label>里程 (万公里)</label>
+        <input type="number" step="0.01" id="carMileage">
+      </div>
+      <div class="form-item"><label>颜色</label>
+        <input type="text" id="carColor">
+      </div>
+      <div class="form-item"><label>燃料</label>
+        <select id="carFuel">
+          <option value="">请选择</option>
+          <option>汽油</option><option>柴油</option><option>纯电动</option>
+          <option>混合动力</option><option>插电混动</option>
+        </select>
+      </div>
+      <div class="form-item"><label>变速箱</label>
+        <select id="carTransmission">
+          <option value="">请选择</option>
+          <option>手动</option><option>自动</option><option>无级</option><option>双离合</option>
+        </select>
+      </div>
+      <div class="form-item"><label>联系人</label>
+        <input type="text" id="carContactName">
+      </div>
+      <div class="form-item"><label>联系电话</label>
+        <input type="text" id="carContactPhone">
+      </div>
+      <div class="form-item full"><label>描述</label>
+        <textarea id="carDescription" rows="3"></textarea>
+      </div>
+      <div class="form-item full"><label>车辆图片 (可上传或填URL，多个用逗号分隔)</label>
+        <input type="file" id="carImageFiles" multiple accept="image/*" onchange="uploadImages()">
+        <div id="imagePreview" class="image-preview"></div>
+        <input type="hidden" id="carImages">
+      </div>
+      <div class="form-item"><label>状态</label>
+        <select id="carStatus">
+          <option value="1">上架</option>
+          <option value="0">下架</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeCarModal()">取消</button>
+      <button class="btn-primary" onclick="saveCar()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "car-sales-website",
+  "version": "1.0.0",
+  "description": "车辆售卖网站 - 品牌/车型/系列/车辆管理",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "cors": "^2.8.5"
+  }
+}
