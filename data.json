@@ -75,6 +75,11 @@
       "name": "桑坦纳",
       "series_name": "轿车",
       "brand_name": "大众"
+    },
+    {
+      "id": 8,
+      "series_id": 8,
+      "name": "123456"
     }
   ],
   "cars": [
@@ -120,7 +125,7 @@
   "nextId": {
     "brands": 5,
     "series": 9,
-    "models": 8,
+    "models": 9,
     "cars": 4
   }
 }
