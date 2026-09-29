@@ -14,6 +14,11 @@
       "id": 3,
       "name": "奥迪",
       "logo": ""
+    },
+    {
+      "id": 4,
+      "name": "大众",
+      "logo": "https://ts2.tc.mm.bing.net/th/id/OIP-C.02N0sqSDT5wfHmkV-vSEpwHaHY?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
     }
   ],
   "series": [
@@ -140,7 +145,7 @@
     }
   ],
   "nextId": {
-    "brands": 4,
+    "brands": 5,
     "series": 7,
     "models": 7,
     "cars": 4
