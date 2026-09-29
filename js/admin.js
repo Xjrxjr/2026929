@@ -1,4 +1,4 @@
-// 管理后台脚本
+// 管理后台脚本 - 使用 GitHub 数据层
 let editingId = null;
 
 // Tab 切换
@@ -14,10 +14,15 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   };
 });
 
+// 通用错误处理
+async function call(fn) {
+  try { await fn(); }
+  catch (e) { alert(e.message); }
+}
+
 // ===== 品牌管理 =====
 async function loadBrandsAdmin() {
-  const res = await fetch('/api/brands');
-  const brands = await res.json();
+  const brands = await GitHubData.getBrands();
   document.getElementById('brandList').innerHTML = brands.map(b => `
     <tr>
       <td>${b.id}</td>
@@ -29,7 +34,6 @@ async function loadBrandsAdmin() {
       </td>
     </tr>`).join('');
 
-  // 填充车系和车型的品牌下拉
   const opts = brands.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
   document.getElementById('seriesBrandId').innerHTML = opts;
   document.getElementById('modelBrandId').innerHTML = opts;
@@ -40,7 +44,7 @@ async function saveBrand() {
   const name = document.getElementById('brandName').value.trim();
   const logo = document.getElementById('brandLogo').value.trim();
   if (!name) return alert('请输入品牌名称');
-  await fetch('/api/brands', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name, logo }) });
+  await call(() => GitHubData.addBrand(name, logo));
   document.getElementById('brandName').value = '';
   document.getElementById('brandLogo').value = '';
   loadBrandsAdmin();
@@ -49,23 +53,21 @@ async function saveBrand() {
 async function updateBrand(id) {
   const name = document.getElementById('bn_' + id).value.trim();
   if (!name) return alert('名称不能为空');
-  await fetch('/api/brands/' + id, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name }) });
+  await call(() => GitHubData.updateBrand(id, name));
   loadBrandsAdmin();
 }
 
 async function deleteBrand(id) {
   if (!confirm('确定删除该品牌吗？相关车系和车型也会被删除！')) return;
-  await fetch('/api/brands/' + id, { method: 'DELETE' });
+  await call(() => GitHubData.deleteBrand(id));
   loadBrandsAdmin();
 }
 
 // ===== 车系管理 =====
 async function loadSeriesAdmin() {
   const brandId = document.getElementById('seriesBrandId').value;
-  const url = brandId ? `/api/series?brand_id=${brandId}` : '/api/series';
-  const res = await fetch(url);
-  const series = await res.json();
-  const brands = await (await fetch('/api/brands')).json();
+  const series = await GitHubData.getSeries(brandId);
+  const brands = await GitHubData.getBrands();
   const brandMap = Object.fromEntries(brands.map(b => [b.id, b.name]));
   document.getElementById('seriesList').innerHTML = series.map(s => `
     <tr>
@@ -83,7 +85,7 @@ async function saveSeries() {
   const brand_id = document.getElementById('seriesBrandId').value;
   const name = document.getElementById('seriesName').value.trim();
   if (!brand_id || !name) return alert('请选择品牌并输入车系名称');
-  await fetch('/api/series', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ brand_id, name }) });
+  await call(() => GitHubData.addSeries(brand_id, name));
   document.getElementById('seriesName').value = '';
   loadSeriesAdmin();
 }
@@ -91,47 +93,36 @@ async function saveSeries() {
 async function updateSeries(id) {
   const name = document.getElementById('sn_' + id).value.trim();
   if (!name) return alert('名称不能为空');
-  await fetch('/api/series/' + id, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name }) });
+  await call(() => GitHubData.updateSeries(id, name));
   loadSeriesAdmin();
 }
 
 async function deleteSeries(id) {
   if (!confirm('确定删除该车系吗？')) return;
-  await fetch('/api/series/' + id, { method: 'DELETE' });
+  await call(() => GitHubData.deleteSeries(id));
   loadSeriesAdmin();
 }
 
 // ===== 车型管理 =====
 async function loadModelsAdmin() {
   const brandId = document.getElementById('modelBrandId').value;
-  let url = '/api/models';
+  const brands = await GitHubData.getBrands();
+  const allSeries = await GitHubData.getSeries();
+  const allModels = await GitHubData.getModels();
+  const brandMap = Object.fromEntries(brands.map(b => [b.id, b.name]));
+  const seriesMap = Object.fromEntries(allSeries.map(s => [s.id, s]));
+
+  let models = allModels;
   if (brandId) {
-    // 获取该品牌下所有车系，再获取车型
-    const sRes = await fetch(`/api/series?brand_id=${brandId}`);
-    const allSeries = await sRes.json();
-    const allModels = [];
-    for (const s of allSeries) {
-      const mRes = await fetch(`/api/models?series_id=${s.id}`);
-      const ms = await mRes.json();
-      ms.forEach(m => { m.series_name = s.name; m.brand_id = brandId; });
-      allModels.push(...ms);
-    }
-    renderModels(allModels);
-  } else {
-    const res = await fetch(url);
-    const models = await res.json();
-    // 获取品牌和车系名
-    const brands = await (await fetch('/api/brands')).json();
-    const allSeries = await (await fetch('/api/series')).json();
-    const brandMap = Object.fromEntries(brands.map(b => [b.id, b.name]));
-    const seriesMap = Object.fromEntries(allSeries.map(s => [s.id, s]));
-    models.forEach(m => {
-      const s = seriesMap[m.series_id];
-      m.series_name = s ? s.name : '-';
-      m.brand_name = s ? (brandMap[s.brand_id] || '-') : '-';
-    });
-    renderModels(models);
+    const sids = allSeries.filter(s => s.brand_id == brandId).map(s => s.id);
+    models = allModels.filter(m => sids.includes(m.series_id));
   }
+  models.forEach(m => {
+    const s = seriesMap[m.series_id];
+    m.series_name = s ? s.name : '-';
+    m.brand_name = s ? (brandMap[s.brand_id] || '-') : '-';
+  });
+  renderModels(models);
 }
 
 function renderModels(models) {
@@ -152,8 +143,7 @@ async function loadSeriesForModel() {
   const brandId = document.getElementById('modelBrandId').value;
   const sel = document.getElementById('modelSeriesId');
   if (!brandId) { sel.innerHTML = '<option value="">请先选择品牌</option>'; return; }
-  const res = await fetch(`/api/series?brand_id=${brandId}`);
-  const series = await res.json();
+  const series = await GitHubData.getSeries(brandId);
   sel.innerHTML = series.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
 }
 
@@ -161,7 +151,7 @@ async function saveModel() {
   const series_id = document.getElementById('modelSeriesId').value;
   const name = document.getElementById('modelName').value.trim();
   if (!series_id || !name) return alert('请选择车系并输入车型名称');
-  await fetch('/api/models', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ series_id, name }) });
+  await call(() => GitHubData.addModel(series_id, name));
   document.getElementById('modelName').value = '';
   loadModelsAdmin();
 }
@@ -169,20 +159,19 @@ async function saveModel() {
 async function updateModel(id) {
   const name = document.getElementById('mn_' + id).value.trim();
   if (!name) return alert('名称不能为空');
-  await fetch('/api/models/' + id, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name }) });
+  await call(() => GitHubData.updateModel(id, name));
   loadModelsAdmin();
 }
 
 async function deleteModel(id) {
   if (!confirm('确定删除该车型吗？')) return;
-  await fetch('/api/models/' + id, { method: 'DELETE' });
+  await call(() => GitHubData.deleteModel(id));
   loadModelsAdmin();
 }
 
 // ===== 车辆管理 =====
 async function loadCarsAdmin() {
-  const res = await fetch('/api/cars/all');
-  const cars = await res.json();
+  const cars = await GitHubData.getAllCars();
   document.getElementById('carList').innerHTML = cars.map(c => `
     <tr>
       <td>${c.id}</td>
@@ -203,8 +192,7 @@ async function loadSeriesForCar() {
   const brandId = document.getElementById('carBrandId').value;
   const sel = document.getElementById('carSeriesId');
   if (!brandId) { sel.innerHTML = ''; return; }
-  const res = await fetch(`/api/series?brand_id=${brandId}`);
-  const series = await res.json();
+  const series = await GitHubData.getSeries(brandId);
   sel.innerHTML = series.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
   loadModelsForCar();
 }
@@ -213,8 +201,7 @@ async function loadModelsForCar() {
   const seriesId = document.getElementById('carSeriesId').value;
   const sel = document.getElementById('carModelId');
   if (!seriesId) { sel.innerHTML = ''; return; }
-  const res = await fetch(`/api/models?series_id=${seriesId}`);
-  const models = await res.json();
+  const models = await GitHubData.getModels(seriesId);
   sel.innerHTML = models.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
 }
 
@@ -238,8 +225,7 @@ function openCarModal() {
 }
 
 async function editCar(id) {
-  const res = await fetch('/api/cars/' + id);
-  const c = await res.json();
+  const c = await GitHubData.getCar(id);
   editingId = id;
   document.getElementById('carModalTitle').textContent = '编辑车辆';
   document.getElementById('carBrandId').value = c.brand_id;
@@ -283,17 +269,15 @@ function removeImage(idx) {
   renderImagePreview();
 }
 
-async function uploadImages() {
-  const files = document.getElementById('carImageFiles').files;
-  if (!files.length) return;
-  const formData = new FormData();
-  for (const f of files) formData.append('images', f);
-  const res = await fetch('/api/upload', { method: 'POST', body: formData });
-  const data = await res.json();
+// 通过 URL 添加图片
+function addImageByUrl() {
+  const input = document.getElementById('carImageUrl');
+  const url = input.value.trim();
+  if (!url) return;
   const existing = document.getElementById('carImages').value;
-  document.getElementById('carImages').value = (existing ? existing + ',' : '') + data.urls.join(',');
+  document.getElementById('carImages').value = (existing ? existing + ',' : '') + url;
+  input.value = '';
   renderImagePreview();
-  document.getElementById('carImageFiles').value = '';
 }
 
 async function saveCar() {
@@ -317,16 +301,14 @@ async function saveCar() {
   if (!data.brand_id || !data.series_id || !data.model_id || !data.title || !data.price) {
     return alert('请填写品牌、车系、车型、标题和价格');
   }
-  const url = editingId ? '/api/cars/' + editingId : '/api/cars';
-  const method = editingId ? 'PUT' : 'POST';
-  await fetch(url, { method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+  await call(() => editingId ? GitHubData.updateCar(editingId, data) : GitHubData.addCar(data));
   closeCarModal();
   loadCarsAdmin();
 }
 
 async function deleteCar(id) {
   if (!confirm('确定删除该车辆吗？')) return;
-  await fetch('/api/cars/' + id, { method: 'DELETE' });
+  await call(() => GitHubData.deleteCar(id));
   loadCarsAdmin();
 }
 

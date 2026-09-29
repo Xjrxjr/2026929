@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>管理后台 - 车易购</title>
-<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <header class="header">
   <div class="container header-inner">
     <div class="logo">🚗 车易购 - 管理后台</div>
     <nav class="nav">
-      <a href="/">返回首页</a>
+      <a href="index.html">返回首页</a>
     </nav>
   </div>
 </header>
@@ -132,8 +132,11 @@
       <div class="form-item full"><label>描述</label>
         <textarea id="carDescription" rows="3"></textarea>
       </div>
-      <div class="form-item full"><label>车辆图片 (可上传或填URL，多个用逗号分隔)</label>
-        <input type="file" id="carImageFiles" multiple accept="image/*" onchange="uploadImages()">
+      <div class="form-item full"><label>车辆图片 (粘贴图片URL后点添加，可多张)</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="carImageUrl" placeholder="粘贴图片链接..." style="flex:1;">
+          <button type="button" class="btn-primary" onclick="addImageByUrl()">添加</button>
+        </div>
         <div id="imagePreview" class="image-preview"></div>
         <input type="hidden" id="carImages">
       </div>
@@ -151,6 +154,8 @@
   </div>
 </div>
 
-<script src="/js/admin.js"></script>
+<script src="config.js"></script>
+<script src="js/github-data.js"></script>
+<script src="js/admin.js"></script>
 </body>
 </html>

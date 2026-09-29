@@ -1,25 +1,20 @@
-// 首页脚本
+// 首页脚本 - 使用 GitHub 数据层
 let brands = [], seriesList = [], models = [];
 
 async function loadBrands() {
-  const res = await fetch('/api/brands');
-  brands = await res.json();
+  brands = await GitHubData.getBrands();
   const sel = document.getElementById('filterBrand');
   sel.innerHTML = '<option value="">全部品牌</option>' + brands.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
 }
 
 async function loadSeries(brandId) {
-  const url = brandId ? `/api/series?brand_id=${brandId}` : '/api/series';
-  const res = await fetch(url);
-  seriesList = await res.json();
+  seriesList = await GitHubData.getSeries(brandId);
   const sel = document.getElementById('filterSeries');
   sel.innerHTML = '<option value="">全部车系</option>' + seriesList.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
 }
 
 async function loadModels(seriesId) {
-  const url = seriesId ? `/api/models?series_id=${seriesId}` : '/api/models';
-  const res = await fetch(url);
-  models = await res.json();
+  models = await GitHubData.getModels(seriesId);
   const sel = document.getElementById('filterModel');
   sel.innerHTML = '<option value="">全部车型</option>' + models.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
 }
@@ -48,18 +43,13 @@ function resetFilters() {
 }
 
 async function loadCars() {
-  const brandId = document.getElementById('filterBrand').value;
-  const seriesId = document.getElementById('filterSeries').value;
-  const modelId = document.getElementById('filterModel').value;
-  const keyword = document.getElementById('keyword').value;
-  let url = '/api/cars?';
-  if (brandId) url += `brand_id=${brandId}&`;
-  if (seriesId) url += `series_id=${seriesId}&`;
-  if (modelId) url += `model_id=${modelId}&`;
-  if (keyword) url += `keyword=${encodeURIComponent(keyword)}&`;
-
-  const res = await fetch(url);
-  const cars = await res.json();
+  const filters = {
+    brand_id: document.getElementById('filterBrand').value,
+    series_id: document.getElementById('filterSeries').value,
+    model_id: document.getElementById('filterModel').value,
+    keyword: document.getElementById('keyword').value
+  };
+  const cars = await GitHubData.getCars(filters);
   const grid = document.getElementById('carGrid');
   const empty = document.getElementById('emptyTip');
   if (cars.length === 0) {
@@ -88,8 +78,7 @@ async function loadCars() {
 }
 
 async function showDetail(id) {
-  const res = await fetch('/api/cars/' + id);
-  const c = await res.json();
+  const c = await GitHubData.getCar(id);
   const imgs = c.images ? c.images.split(',').filter(Boolean) : [];
   const img = imgs[0] || '';
   const html = `

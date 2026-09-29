@@ -1,0 +1,148 @@
+{
+  "brands": [
+    {
+      "id": 1,
+      "name": "奔驰",
+      "logo": ""
+    },
+    {
+      "id": 2,
+      "name": "宝马",
+      "logo": ""
+    },
+    {
+      "id": 3,
+      "name": "奥迪",
+      "logo": ""
+    }
+  ],
+  "series": [
+    {
+      "id": 1,
+      "brand_id": 1,
+      "name": "C级"
+    },
+    {
+      "id": 2,
+      "brand_id": 1,
+      "name": "E级"
+    },
+    {
+      "id": 3,
+      "brand_id": 2,
+      "name": "3系"
+    },
+    {
+      "id": 4,
+      "brand_id": 2,
+      "name": "5系"
+    },
+    {
+      "id": 5,
+      "brand_id": 3,
+      "name": "A4L"
+    },
+    {
+      "id": 6,
+      "brand_id": 3,
+      "name": "A6L"
+    }
+  ],
+  "models": [
+    {
+      "id": 1,
+      "series_id": 1,
+      "name": "C 200 L"
+    },
+    {
+      "id": 2,
+      "series_id": 2,
+      "name": "E 300 L"
+    },
+    {
+      "id": 3,
+      "series_id": 3,
+      "name": "325Li"
+    },
+    {
+      "id": 4,
+      "series_id": 4,
+      "name": "530Li"
+    },
+    {
+      "id": 5,
+      "series_id": 5,
+      "name": "40 TFSI"
+    },
+    {
+      "id": 6,
+      "series_id": 6,
+      "name": "45 TFSI"
+    }
+  ],
+  "cars": [
+    {
+      "id": 1,
+      "brand_id": 1,
+      "series_id": 2,
+      "model_id": 2,
+      "title": "2023款 奔驰 E 300 L 豪华型",
+      "price": 42.8,
+      "year": 2023,
+      "mileage": 1.5,
+      "color": "黑色",
+      "fuel": "汽油",
+      "transmission": "自动",
+      "description": "个人一手车，全程4S店保养，无事故无泡水，车况精品。",
+      "images": "",
+      "contact_name": "张先生",
+      "contact_phone": "13800138000",
+      "status": 1,
+      "created_at": "2026-09-29T04:08:05.473Z"
+    },
+    {
+      "id": 2,
+      "brand_id": 2,
+      "series_id": 4,
+      "model_id": 4,
+      "title": "2022款 宝马 530Li 尊享型",
+      "price": 38.5,
+      "year": 2022,
+      "mileage": 3.2,
+      "color": "白色",
+      "fuel": "汽油",
+      "transmission": "自动",
+      "description": "准新车，配置丰富，全景天窗，座椅加热通风。",
+      "images": "",
+      "contact_name": "李女士",
+      "contact_phone": "13900139000",
+      "status": 1,
+      "created_at": "2026-09-29T04:08:05.473Z"
+    },
+    {
+      "id": 3,
+      "brand_id": 3,
+      "series_id": 6,
+      "model_id": 6,
+      "title": "2021款 奥迪 A6L 45 TFSI",
+      "price": 32,
+      "year": 2021,
+      "mileage": 5.8,
+      "color": "银色",
+      "fuel": "汽油",
+      "transmission": "自动",
+      "description": "商务用车，内饰豪华，车况良好。",
+      "images": "",
+      "contact_name": "王经理",
+      "contact_phone": "13700137000",
+      "status": 1,
+      "created_at": "2026-09-29T04:08:05.473Z"
+    }
+  ],
+  "nextId": {
+    "brands": 4,
+    "series": 7,
+    "models": 7,
+    "cars": 4
+  }
+}
